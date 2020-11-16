@@ -1,1 +1,2 @@
-Hello this repo is for teacher's demo
+this repo is for teacher's demo
+NodeJS code
