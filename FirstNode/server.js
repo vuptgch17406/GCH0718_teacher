@@ -1,5 +1,6 @@
 var http = require('http')
-var fs = require('fs')
+var fs = require('fs');
+const { url } = require('inspector');
 
 var server = http.createServer((req,res)=>{
     if(req.url =='/' || req.url== 'index'){
@@ -28,7 +29,36 @@ var server = http.createServer((req,res)=>{
         res.write('<a href="/">Go To Home</a>')
         res.write('</body>')
         res.end('</html')
-    }else{
+    }else if(req.url =='/addAnimal'){
+        res.write('<html>');
+        res.write('<body>')
+        res.write('<h1 style="color:blue">Add a new Animal</h1>')
+        res.write('<form method="POST" action="/doAdd">');
+        res.write('<input type="text" name="name"/>');
+        res.write('<input type="submit"/>')
+        res.write('</form>')
+        res.write('<br>')
+        res.write('<a href="/">Go To Home</a>')
+        res.write('</body>')
+        res.end('</html')
+    }else if(req.url =='/doAdd'){
+        let requestBody = [];
+        req.on('data',(chunks)=>{
+            requestBody.push(chunks);
+        })
+        req.on('end',()=>{
+            parsedData = Buffer.concat(requestBody).toString();
+            console.debug("parsed data: " + parsedData);
+            let animialName = parsedData.split('=')[1];
+            fs.appendFileSync('data.txt',';'+animialName);
+            console.debug("animain: " + animialName);
+        })
+        //chuyen huong
+        res.statusCode = 302;
+        res.setHeader('Location','/');
+        return res.end();
+    }
+    else{
         res.write('<html>');
         res.write('<body>')
         res.write('<h1 style="color:blue">File khong ton tai!</h1>')
